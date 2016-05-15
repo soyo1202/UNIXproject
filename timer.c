@@ -6,24 +6,24 @@ void make_player_bullet()
     tmp->dy = 0;
     
     switch( dir_shoot ){   // 键盘键值类型  
-        case 0: // up
+      /*  case 0: // up
         	tmp->x = player.x + (player.width-bullet_width)/2;
         	tmp->y = player.y;
         	tmp->dy = -10;
         	printf("W\n");
-        	break;
+        	break;*/
         case 1: // left
         	tmp->x = player.x;
         	tmp->y = player.y + (player.height-bullet_height)/2;
         	tmp->dx = -10;
         	printf("A\n");
         	break;
-        case 2: // down
+     /*   case 2: // down
         	tmp->x = player.x + (player.width-bullet_width)/2;
-        	tmp->y = player.y + player.height-bullet_height;      	
+        	tmp->y = player.y + player.height-bullet_height;	
         	tmp->dy = 10;
         	printf("S\n");
-        	break;
+        	break;*/
         case 3: // right
         	tmp->x = player.x + player.width-bullet_width;
         	tmp->y = player.y + (player.height-bullet_height)/2;        	
@@ -33,10 +33,15 @@ void make_player_bullet()
         default:
         	break;
     }  
-
-    tmp->mode = player_bullet_mode;
-    g_ptr_array_add( player_bullet, tmp );
-    player_bullet_num++;
+	
+	if( dir_shoot==1 || dir_shoot==3 )
+	{
+		tmp->mode = player_bullet_mode;
+		g_ptr_array_add( player_bullet, tmp );
+		player_bullet_num++;
+    }
+    else
+    	free(tmp);
 
 
 }
@@ -49,42 +54,45 @@ void make_boss_3_bullet()
     tmp->dy = 0;
     
     switch( dir_shoot ){   // 键盘键值类型  
-        case 0: // up
+    /*    case 0: // up
         	tmp->x = boss_3.x + (boss_3.width-bullet_width)/2;
         	tmp->y = boss_3.y;
         	tmp->dy = -10;
         	//printf("W\n");
-        	break;
+        	break;*/
         case 1: // left
-        	tmp->x = boss_3.x;
-        	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;
+			tmp->x = boss_3.x + boss_3.width-bullet_width;
+        	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;        	
         	tmp->dx = 10;
         	//printf("A\n");
         	break;
-        case 2: // down
+    /*    case 2: // down
         	tmp->x = boss_3.x + (boss_3.width-bullet_width)/2;
-        	tmp->y = boss_3.y + boss_3.height-bullet_height;      	
+        	tmp->y = boss_3.y + boss_3.height-bullet_height;     
         	tmp->dy = 10;
         	//printf("S\n");
-        	break;
+        	break;*/
         case 3: // right
-        	tmp->x = boss_3.x + boss_3.width-bullet_width;
-        	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;        	
+        	tmp->x = boss_3.x;
+        	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;
         	tmp->dx = -10;
         	//printf("D\n");
         	break;
         default:
         	break;
     }  
-
-    tmp->mode = player_bullet_mode;
-    g_ptr_array_add( boss_bullet, tmp );
-    boss_bullet_num++;
+    
+	if( dir_shoot==1 || dir_shoot==3 )
+	{
+		tmp->mode = player_bullet_mode;
+		g_ptr_array_add( boss_bullet, tmp );
+		boss_bullet_num++;
+    }
+    else
+    	free(tmp);
 
 
 }
-
-
 
 gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 {
@@ -92,8 +100,8 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 	if( dir_shoot != -1 )
 	{
     	make_player_bullet();
-	//	if( stage == 3 )
-	//		make_boss_3_bullet();
+		if( stage == 3 )
+			make_boss_3_bullet();
 	}
 	return true;
 }
@@ -130,24 +138,33 @@ gboolean player_move(gpointer data)
 gboolean shoot_bullet(gpointer data) {
     // static gint count = 0;
 
-	
-
 	int i;
-	bool hit = false;
 	for( i = 0; i < player_bullet_num; i++ )
 	{
+	/*	BULLET *tmp = g_ptr_array_index( player_bullet , i);
+		tmp->x += tmp->dx;
+		tmp->y += tmp->dy;
+		if( tmp->x < 0 || tmp->x > window_width
+		||  tmp->y < 0 || tmp->y > window_height )
+		{
+			
+			player_bullet_num--;
+			tmp = g_ptr_array_remove_index(player_bullet,i);
+			// printf("test free = %d\n", tmp->x);
+			free(tmp);
+			i--;
+		}*/
 		BULLET *tmp = g_ptr_array_index( player_bullet , i);
+		// check bullet attack boss
 		if((tmp->x >= boss_3.x && tmp->x <= boss_3.x + boss_width && tmp->y >= boss_3.y && tmp->y<= boss_3.y+boss_height))	{
 			boss_3.life -= 20;
 			player_bullet_num--;
 			tmp = g_ptr_array_remove_index(player_bullet,i);
 			free(tmp);
 			i--;
-			hit = true;
-			//printf("gotcha1\n");
 		}
-		//printf("gotcha2\n");
-		if(!hit){
+		// check bullet out of range
+		else{
 			tmp->x += tmp->dx;
 			tmp->y += tmp->dy;
 			if( tmp->x < 0 || tmp->x > window_width
@@ -156,17 +173,35 @@ gboolean shoot_bullet(gpointer data) {
 			
 				player_bullet_num--;
 				tmp = g_ptr_array_remove_index(player_bullet,i);
-				// printf("test free = %d\n", tmp->x);
 				free(tmp);
 				i--;
 			}
 		}
-		hit = false;
+
 	
 	}
+	
+	for( i = 0; i < boss_bullet_num; i++ )
+	{
+		BULLET *tmp = g_ptr_array_index( boss_bullet , i);
+		tmp->x += tmp->dx;
+		tmp->y += tmp->dy;
+		if( tmp->x < 0 || tmp->x > window_width
+		||  tmp->y < 0 || tmp->y > window_height )
+		{
+			
+			boss_bullet_num--;
+			tmp = g_ptr_array_remove_index(boss_bullet,i);
+			// printf("test free = %d\n", tmp->x);
+			free(tmp);
+			i--;
+		}
+	
+	}
+	
+	
 		
 	gtk_widget_queue_draw(wid);
-	
     return TRUE;
 
 

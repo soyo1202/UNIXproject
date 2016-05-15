@@ -1,10 +1,9 @@
-// test push by moon
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h> // for keyboard，GDK_Up is declared here 
 #include <stdbool.h> // for bool
 #include <glib.h> // for garray
 #include <stdlib.h> // for malloc
-#include <time.h>   // clock_t, clock, CLOCKS_PER_SEC 
+#include <sys/time.h>   // clock_t, clock, CLOCKS_PER_SEC 
 
 #include "chara.h"
 #include "bullet.h"
@@ -34,6 +33,8 @@ int stage = 3; // 關卡
 double fullblood = 100;
 
 
+
+
 void calculate_boss3_pos()
 {
 	boss_3.y = player.y-(boss_height/2-player_height/2);
@@ -47,6 +48,35 @@ void calculate_boss3_pos()
 		boss_3.x = 0;
 	else if( boss_3.x+boss_width > window_width )
 		boss_3.x = window_width-boss_width;
+}
+
+void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
+{
+	// count time	
+	static gdouble ms = 0;
+	static GTimer *timer;
+	if( ms == 0 )
+	{
+		timer = g_timer_new();
+		g_timer_start( timer );
+	}
+//	g_timer_stop( timer );
+	ms = g_timer_elapsed( timer, NULL );
+	printf("time = %f\n",(float)ms);
+	
+	
+	
+	
+	
+	// check unique skill for boss_3
+	if( (float)(boss_3.life/fullblood) < (float)(1.0/3.0) )
+	{
+	//	unique_skill_for_boss3( gc, drawable );
+		printf("got");
+	}
+	else
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/BOSS.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+
 }
 
 #include "timer.c"
@@ -69,10 +99,6 @@ gboolean expose_event_callback(GtkWidget *widget,
 //	gdk_draw_pixbuf(drawable, gc, pixbuf, 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);  
 
 	
-	if( stage == 3 )	
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/BOSS.png", NULL)
-		, 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-	
 
 	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/chara.png", NULL)
 	, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
@@ -85,16 +111,21 @@ gboolean expose_event_callback(GtkWidget *widget,
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
 			, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
-/*	for( i = 0; i < boss_bullet_num; i++ )
+	for( i = 0; i < boss_bullet_num; i++ )
 	{
 		BULLET *t = g_ptr_array_index(boss_bullet, i);	
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
 			, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-	}	*/
-//blood line of boss	
+	}
+
+ 	// blood line of boss	
 	double boss_life = boss_3.life;
 	double length = window_width * (double)(boss_3.life/fullblood);
 	gdk_draw_rectangle( drawable, gc, 1, 0, 0, length, 20);
+	// check unique skill for boss 3
+	if( stage == 3 )
+		draw_boss3( gc, drawable );
+	
  
     return TRUE;
 }
@@ -137,6 +168,7 @@ int main(int argc, char *argv[]) {
 	// var
 	wid = window;
 	player_bullet = g_ptr_array_new();
+	boss_bullet = g_ptr_array_new();
 	//  initCHARA( CHARA chara, int x, int y, int width, int height, int speed, int type, int life)
 	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 100 );
 	calculate_boss3_pos();
