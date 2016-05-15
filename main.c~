@@ -30,7 +30,7 @@ GPtrArray *boss_bullet;
 bool dir_move[4] = {false, false, false, false}; // up left down right
 int dir_shoot = -1;
 int stage = 3; // 關卡
-int fullblood = 100;
+double fullblood = 100;
 
 
 void calculate_boss3_pos()
@@ -91,7 +91,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 			, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}	*/
 //blood line of boss	
-
+	double boss_life = boss_3.life;
 	double length = window_width * (double)(boss_3.life/fullblood);
 	gdk_draw_rectangle( drawable, gc, 1, 0, 0, length, 20);
  
