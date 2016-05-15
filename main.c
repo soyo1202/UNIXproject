@@ -23,7 +23,7 @@ CHARA player;
 CHARA boss_3;
 int player_bullet_num = 0;
 int boss_bullet_num = 0;
-int bullet_width = 10, bullet_height = 10;
+int bullet_width = 20, bullet_height = 20;
 int player_bullet_mode = 0;
 GtkWidget *wid;
 GPtrArray *player_bullet;
@@ -32,7 +32,10 @@ bool dir_move[4] = {false, false, false, false}; // up left down right
 int dir_shoot = -1;
 int stage = 3; // 關卡
 double fullblood = 100;
-const char *RLchara[2] ={"image/chara.png", "image/chara_l.png"};
+bool use_skill_boss3 = false; // 是否使用過絕招
+bool defense = false;
+bool invin = false; // 無敵
+const char *RLchara[2] ={"image/chara_r.png", "image/chara_l.png"};
 int turn = _R;
 
 
@@ -56,6 +59,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	// count time	
 	static gdouble ms = 0;
 	static GTimer *timer;
+	static use = false;
 	if( ms == 0 )
 	{
 		timer = g_timer_new();
@@ -65,21 +69,49 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	ms = g_timer_elapsed( timer, NULL );
 //	printf("time = %f\n",(float)ms);
 	
-	
-	
-	
-	
+
 	// check unique skill for boss_3
-	if( (float)(boss_3.life/fullblood) < (float)(1.0/3.0) )
+	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.5 ))
 	{
-	//	unique_skill_for_boss3( gc, drawable );
-		printf("got");
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/BOSS.png", NULL), 0, 0, player.x-(boss_width-player_width)/2, player.y-(boss_height-player_height)/2, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		if( !use )
+		{
+			use = true;
+			g_timer_start( timer );
+		}
 	}
 	else
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/BOSS.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 
 }
 
+void draw_player_life( GdkGC *gc, GdkDrawable *drawable )
+{
+	switch (player.life)
+	{
+		case 5:
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 220, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		case 4:
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 170, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	
+		case 3:
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 120, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		case 2:
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 70, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		case 1:
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 20, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		default:
+			break;
+	}
+
+
+}
+
+void check_defense( GdkGC *gc, GdkDrawable *drawable )
+{
+	if( defense )
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/defense.png", NULL), 0, 0, player.x-24, player.y-24, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+}
 #include "timer.c"
 #include "controlKeyboard.c"
 
@@ -99,10 +131,14 @@ gboolean expose_event_callback(GtkWidget *widget,
 //	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("chara.png", NULL);
 //	gdk_draw_pixbuf(drawable, gc, pixbuf, 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);  
 
+	if( stage == 3 )
+		draw_boss3( gc, drawable );
 	
 
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/chara.png", NULL)
 	, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	
+	draw_player_life( gc, drawable );
 	
 	
 	int i;
@@ -119,13 +155,13 @@ gboolean expose_event_callback(GtkWidget *widget,
 			, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
 
+
+	check_defense( gc, drawable );
  	// blood line of boss	
 	double boss_life = boss_3.life;
 	double length = window_width * (double)(boss_3.life/fullblood);
 	gdk_draw_rectangle( drawable, gc, 1, 0, 0, length, 20);
-	// check unique skill for boss 3
-	if( stage == 3 )
-		draw_boss3( gc, drawable );
+	
 	
  
     return TRUE;
@@ -162,7 +198,7 @@ int main(int argc, char *argv[]) {
 
 	g_timeout_add( 50, (GSourceFunc)shoot_bullet, NULL);
 	g_timeout_add( 50, (GSourceFunc)player_move, NULL);
-	g_timeout_add(150, (GSourceFunc)deal_bullet_shoot, NULL);
+//	g_timeout_add(150, (GSourceFunc)deal_bullet_shoot, NULL);
 
 	
 	
@@ -171,7 +207,7 @@ int main(int argc, char *argv[]) {
 	player_bullet = g_ptr_array_new();
 	boss_bullet = g_ptr_array_new();
 	//  initCHARA( CHARA chara, int x, int y, int width, int height, int speed, int type, int life)
-	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 100 );
+	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 3 );
 	calculate_boss3_pos();
 	initCHARA( &boss_3, boss_3.x, boss_3.y, boss_width, boss_height, 7, 1, 100 );
 	

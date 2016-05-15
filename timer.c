@@ -93,7 +93,7 @@ void make_boss_3_bullet()
 
 
 }
-
+/*
 gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 {
 //	printf("deal shoot = %d\n",dir_shoot);	
@@ -106,7 +106,7 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 	return true;
 }
 
-
+*/
 gboolean player_move(gpointer data)
 {
 
@@ -141,19 +141,6 @@ gboolean shoot_bullet(gpointer data) {
 	int i;
 	for( i = 0; i < player_bullet_num; i++ )
 	{
-	/*	BULLET *tmp = g_ptr_array_index( player_bullet , i);
-		tmp->x += tmp->dx;
-		tmp->y += tmp->dy;
-		if( tmp->x < 0 || tmp->x > window_width
-		||  tmp->y < 0 || tmp->y > window_height )
-		{
-			
-			player_bullet_num--;
-			tmp = g_ptr_array_remove_index(player_bullet,i);
-			// printf("test free = %d\n", tmp->x);
-			free(tmp);
-			i--;
-		}*/
 		BULLET *tmp = g_ptr_array_index( player_bullet , i);
 		// check bullet attack boss
 		if((tmp->x >= boss_3.x && tmp->x <= boss_3.x + boss_width && tmp->y >= boss_3.y && tmp->y<= boss_3.y+boss_height))	{
@@ -186,7 +173,22 @@ gboolean shoot_bullet(gpointer data) {
 		BULLET *tmp = g_ptr_array_index( boss_bullet , i);
 		tmp->x += tmp->dx;
 		tmp->y += tmp->dy;
-		if( tmp->x < 0 || tmp->x > window_width
+		
+		// check bullet attack player
+		if( tmp->y+bullet_height > player.y && tmp->y < player.y+120 
+      	&& tmp->x > player.x && tmp->x+bullet_width < player.x+120 )
+      	{
+      		if( defense )
+      			defense = false;
+      		else if( !invin ) // !defense
+      			player.life--;
+      		boss_bullet_num--;
+			tmp = g_ptr_array_remove_index(boss_bullet,i);
+			free(tmp);
+			i--;
+      	}
+		// check boss bullet out of range
+		else if( tmp->x < 0 || tmp->x > window_width
 		||  tmp->y < 0 || tmp->y > window_height )
 		{
 			
@@ -204,11 +206,6 @@ gboolean shoot_bullet(gpointer data) {
 	gtk_widget_queue_draw(wid);
     return TRUE;
 
-
- //   else {
- //   	g_print ("timer expire\n");
- //     return FALSE;
- //   }
 }
 
 
