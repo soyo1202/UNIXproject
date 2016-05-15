@@ -10,7 +10,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             break;  
         case GDK_Left:
        	 	dir_move[1] = move;
-		turn = _L;
+			turn = _L;
         /*	if( player.x - player.speed >= 0 )
 				player.x -= player.speed;  */
             // printf("Left\n");  
@@ -65,7 +65,7 @@ gboolean deal_key_press(GtkWidget *widget, GdkEventKey  *event, gpointer data)
     checkPlayerMove( event, true );
     checkBulletShoot( event, true );
 
-  	gtk_widget_queue_draw(widget );
+  	gtk_widget_queue_draw(widget);
     return TRUE;  
 }  
   

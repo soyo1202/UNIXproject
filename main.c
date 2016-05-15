@@ -63,7 +63,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	}
 //	g_timer_stop( timer );
 	ms = g_timer_elapsed( timer, NULL );
-	printf("time = %f\n",(float)ms);
+//	printf("time = %f\n",(float)ms);
 	
 	
 	
