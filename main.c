@@ -14,7 +14,8 @@
 #define boss_height   216
 #define window_width  800
 #define window_height 600
-
+#define _R 0
+#define _L 1
 
 
 
@@ -31,8 +32,8 @@ bool dir_move[4] = {false, false, false, false}; // up left down right
 int dir_shoot = -1;
 int stage = 3; // 關卡
 double fullblood = 100;
-
-
+const char *RLchara[2] ={"image/chara.png", "image/chara_l.png"};
+int turn = _R;
 
 
 void calculate_boss3_pos()
@@ -100,7 +101,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 
 	
 
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/chara.png", NULL)
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
 	, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	
 	

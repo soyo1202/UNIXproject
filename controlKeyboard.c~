@@ -1,8 +1,6 @@
 
 void checkPlayerMove( GdkEventKey *event, bool move)
 {
-	if( stage == 3 )
-		calculate_boss3_pos();
     switch(event->keyval){   // 键盘键值类型  
         case GDK_Up: 
         	dir_move[0] = move;
@@ -12,6 +10,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             break;  
         case GDK_Left:
        	 	dir_move[1] = move;
+		turn = _L;
         /*	if( player.x - player.speed >= 0 )
 				player.x -= player.speed;  */
             // printf("Left\n");  
@@ -24,7 +23,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             break;  
         case GDK_Right:
         	dir_move[3] = move;
-        
+        	turn = _R;
             /*	if( player.x + player.width <= window_width )
 				player.x += player.speed;  */
             // printf("Right\n");  
@@ -37,18 +36,18 @@ void checkPlayerMove( GdkEventKey *event, bool move)
 void checkBulletShoot( GdkEventKey  *event, bool shoot )
 {
 	switch(event->keyval){   // 键盘键值类型  
-	    case 'w': case 'W':
+	  /*  case 'w': case 'W':
 			dir_shoot = shoot ? 0 : -1 ;
 	    	printf("shoot = %d\n",shoot);
-	    	break;
+	    	break;*/
 	    case 'a': case 'A':
 			dir_shoot = shoot ? 1 : -1 ;
 	    	// printf("A\n");
 	    	break;
-	    case 's': case 'S':
+	  /*  case 's': case 'S':
 			dir_shoot = shoot ? 2 : -1 ;
 	    	// printf("S\n");
-	    	break;
+	    	break;*/
 	    case 'd': case 'D':
 			dir_shoot = shoot ? 3 : -1 ;
 	   	 	// printf("D\n");

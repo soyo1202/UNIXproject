@@ -10,6 +10,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             break;  
         case GDK_Left:
        	 	dir_move[1] = move;
+		turn = _L;
         /*	if( player.x - player.speed >= 0 )
 				player.x -= player.speed;  */
             // printf("Left\n");  
@@ -22,7 +23,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             break;  
         case GDK_Right:
         	dir_move[3] = move;
-        
+        	turn = _R;
             /*	if( player.x + player.width <= window_width )
 				player.x += player.speed;  */
             // printf("Right\n");  
