@@ -35,18 +35,18 @@ void checkPlayerMove( GdkEventKey *event, bool move)
 void checkBulletShoot( GdkEventKey  *event, bool shoot )
 {
 	switch(event->keyval){   // 键盘键值类型  
-	    case 'w': case 'W':
+	  /*  case 'w': case 'W':
 			dir_shoot = shoot ? 0 : -1 ;
 	    	printf("shoot = %d\n",shoot);
-	    	break;
+	    	break;*/
 	    case 'a': case 'A':
 			dir_shoot = shoot ? 1 : -1 ;
 	    	// printf("A\n");
 	    	break;
-	    case 's': case 'S':
+	  /*  case 's': case 'S':
 			dir_shoot = shoot ? 2 : -1 ;
 	    	// printf("S\n");
-	    	break;
+	    	break;*/
 	    case 'd': case 'D':
 			dir_shoot = shoot ? 3 : -1 ;
 	   	 	// printf("D\n");
