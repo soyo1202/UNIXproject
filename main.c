@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
 
 	g_timeout_add( 50, (GSourceFunc)shoot_bullet, NULL);
 	g_timeout_add( 50, (GSourceFunc)player_move, NULL);
-//	g_timeout_add(150, (GSourceFunc)deal_bullet_shoot, NULL);
+	g_timeout_add(150, (GSourceFunc)deal_bullet_shoot, NULL);
 
 	
 	

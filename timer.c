@@ -93,7 +93,7 @@ void make_boss_3_bullet()
 
 
 }
-/*
+
 gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 {
 //	printf("deal shoot = %d\n",dir_shoot);	
@@ -104,9 +104,10 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 			make_boss_3_bullet();
 	}
 	return true;
+
 }
 
-*/
+
 gboolean player_move(gpointer data)
 {
 

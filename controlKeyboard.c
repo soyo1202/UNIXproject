@@ -39,8 +39,7 @@ void checkBulletShoot( GdkEventKey  *event, bool shoot )
 		default:
 			return;
     }
-
-	static gdouble sec = 0;
+/*	static gdouble sec = 0;
 	static GTimer *timer;
 	static first_call = true;
 	if( sec == 0 )
@@ -59,8 +58,10 @@ void checkBulletShoot( GdkEventKey  *event, bool shoot )
 		if( stage == 3 )
 			make_boss_3_bullet();
 	}
-	if( !shoot )
+	if( !dir_shoot == -1 )
 		first_call = true;
+*/
+
 
 }
 
