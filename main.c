@@ -1,3 +1,5 @@
+// test
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h> // for keyboard，GDK_Up is declared here 
 #include <stdbool.h> // for bool
@@ -135,7 +137,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 		draw_boss3( gc, drawable );
 	
 
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/chara.png", NULL)
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
 	, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	
 	draw_player_life( gc, drawable );
