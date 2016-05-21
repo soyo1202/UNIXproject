@@ -109,10 +109,40 @@ void draw_player_life( GdkGC *gc, GdkDrawable *drawable )
 
 }
 
-void check_defense( GdkGC *gc, GdkDrawable *drawable )
+void make_defense( GdkGC *gc, GdkDrawable *drawable )
 {
-	if( defense )
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/defense.png", NULL), 0, 0, player.x-24, player.y-24, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	
+	static gdouble sec = 0;
+	static GTimer *timer;
+	static first_call = true;
+	
+	if( first_call )
+	{
+		timer = g_timer_new();
+		first_call = false;
+	}
+	if( sec == 0 )
+		g_timer_start( timer );
+	
+
+	sec = g_timer_elapsed( timer, NULL );
+	printf("sec = %f\n",sec);
+	if( sec > 0.6 )
+	{
+		defense = false;
+		g_timer_start(timer);
+		sec = 0;
+		//sec = g_timer_elapsed( timer, NULL );
+		printf("iner sec = %f\n",sec);
+	}
+		
+	
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/defense.png", NULL), 0, 0, player.x-24, player.y-24, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	
+	
+	
+	
+
 }
 #include "timer.c"
 #include "controlKeyboard.c"
@@ -157,8 +187,8 @@ gboolean expose_event_callback(GtkWidget *widget,
 			, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
 
-
-	check_defense( gc, drawable );
+	if( defense )
+		make_defense( gc, drawable );
  	// blood line of boss	
 	double boss_life = boss_3.life;
 	double length = window_width * (double)(boss_3.life/fullblood);
