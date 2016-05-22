@@ -12,8 +12,8 @@
 
 #define player_width   72
 #define player_height  72
-#define boss_width    216
-#define boss_height   216
+#define boss_width     60
+#define boss_height    60
 #define window_width  800
 #define window_height 600
 #define _R 0
@@ -75,7 +75,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	// check unique skill for boss_3
 	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.5 ))
 	{
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/BOSS.png", NULL), 0, 0, player.x-(boss_width-player_width)/2, player.y-(boss_height-player_height)/2, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, player.x-(boss_width-player_width)/2, player.y-(boss_height-player_height)/2, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		if( !use )
 		{
 			use = true;
@@ -83,7 +83,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 		}
 	}
 	else
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/BOSS.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 
 }
 
@@ -163,8 +163,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 //	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("chara.png", NULL);
 //	gdk_draw_pixbuf(drawable, gc, pixbuf, 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);  
 
-	if( stage == 3 )
-		draw_boss3( gc, drawable );
+
 	
 
 	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
@@ -172,6 +171,8 @@ gboolean expose_event_callback(GtkWidget *widget,
 	
 	draw_player_life( gc, drawable );
 	
+	if( stage == 3 )
+		draw_boss3( gc, drawable );
 	
 	int i;
 	for( i = 0; i < player_bullet_num; i++ )
