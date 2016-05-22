@@ -107,6 +107,40 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 
 }
 
+bool checkCollision( int type )
+{ // type == 1 check player and boss
+
+	static gdouble sec = 0;
+	static GTimer *timer;
+	static first_call = true;
+	
+	if( first_call )
+	{
+		timer = g_timer_new();
+	}
+	if( sec == 0 )
+		g_timer_start( timer );
+	
+
+	sec = g_timer_elapsed( timer, NULL );
+	
+
+
+	if( type == 1 )
+	{
+		if( player.x+player.width > boss_3.x && player.y+player.height > boss_3.y &&( first_call || sec > 0.4 ))
+		{
+			first_call = false;
+			g_timer_start( timer );
+			printf("collision\n");
+			player.life--;
+		}
+		
+	}
+
+}
+
+
 
 gboolean player_move(gpointer data)
 {
@@ -127,10 +161,12 @@ gboolean player_move(gpointer data)
 		if( player.x + player.width <= window_width )
 			player.x += player.speed; 
 			
-			
+	
 	if( (dir_move[0] || dir_move[1] || dir_move[2] || dir_move[3]) && stage == 3 )
 		calculate_boss3_pos();
 		
+	checkCollision(1);
+	
 	return true;
 }
 

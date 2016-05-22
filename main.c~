@@ -163,8 +163,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 //	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("chara.png", NULL);
 //	gdk_draw_pixbuf(drawable, gc, pixbuf, 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);  
 
-	if( stage == 3 )
-		draw_boss3( gc, drawable );
+
 	
 
 	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
@@ -172,6 +171,8 @@ gboolean expose_event_callback(GtkWidget *widget,
 	
 	draw_player_life( gc, drawable );
 	
+	if( stage == 3 )
+		draw_boss3( gc, drawable );
 	
 	int i;
 	for( i = 0; i < player_bullet_num; i++ )

@@ -171,7 +171,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 	
 	draw_player_life( gc, drawable );
 	
-	if( stage == 3 )
+		if( stage == 3 )
 		draw_boss3( gc, drawable );
 	
 	int i;
