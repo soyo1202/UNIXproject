@@ -40,6 +40,7 @@ bool invin = false; // 無敵
 const char *RLchara[2] ={"image/chara_r.png", "image/chara_l.png"};
 int turn = _R;
 
+bool checkCollision( int type );
 
 void calculate_boss3_pos()
 {
@@ -76,6 +77,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.5 ))
 	{
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, player.x-(boss_width-player_width)/2, player.y-(boss_height-player_height)/2, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		player.life--;
 		if( !use )
 		{
 			use = true;
@@ -171,7 +173,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 	
 	draw_player_life( gc, drawable );
 	
-	if( stage == 3 )
+		if( stage == 3 )
 		draw_boss3( gc, drawable );
 	
 	int i;

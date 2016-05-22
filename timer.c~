@@ -128,7 +128,7 @@ bool checkCollision( int type )
 
 	if( type == 1 )
 	{
-		if( player.x+player.width > boss_3.x && player.y+player.height > boss_3.y &&( first_call || sec > 0.6 ))
+		if( player.x+player.width > boss_3.x && player.y+player.height > boss_3.y &&( first_call || sec > 0.4 ))
 		{
 			first_call = false;
 			g_timer_start( timer );
@@ -212,8 +212,10 @@ gboolean shoot_bullet(gpointer data) {
 		tmp->y += tmp->dy;
 		
 		// check bullet attack player
-		if( tmp->y+bullet_height > player.y && tmp->y < player.y+120 
-      	&& tmp->x > player.x && tmp->x+bullet_width < player.x+120 )
+	/*	if( tmp->y+bullet_height > player.y && tmp->y < player.y+120 
+      	&& tmp->x > player.x && tmp->x+bullet_width < player.x+120 )*/
+		if( tmp->y+bullet_height > player.y && tmp->y < player.y+player.height 
+      	&& tmp->x > player.x && tmp->x+bullet_width < player.x+player.width )
       	{
       		if( defense )
       			defense = false;

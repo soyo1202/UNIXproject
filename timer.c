@@ -212,8 +212,10 @@ gboolean shoot_bullet(gpointer data) {
 		tmp->y += tmp->dy;
 		
 		// check bullet attack player
-		if( tmp->y+bullet_height > player.y && tmp->y < player.y+120 
-      	&& tmp->x > player.x && tmp->x+bullet_width < player.x+120 )
+	/*	if( tmp->y+bullet_height > player.y && tmp->y < player.y+120 
+      	&& tmp->x > player.x && tmp->x+bullet_width < player.x+120 )*/
+		if( tmp->y+bullet_height >= player.y && tmp->y <= player.y+player.height 
+      	&& tmp->x >= player.x && tmp->x+bullet_width <= player.x+player.width )
       	{
       		if( defense )
       			defense = false;
