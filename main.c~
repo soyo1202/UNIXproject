@@ -77,11 +77,12 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.5 ))
 	{
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, player.x-(boss_width-player_width)/2, player.y-(boss_height-player_height)/2, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-		player.life--;
+		
 		if( !use )
 		{
 			use = true;
 			g_timer_start( timer );
+			player.life--;
 		}
 	}
 	else

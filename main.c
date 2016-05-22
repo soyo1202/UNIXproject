@@ -82,7 +82,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 		{
 			use = true;
 			g_timer_start( timer );
-			player.life--;
+		//	player.life--;
 		}
 	}
 	else

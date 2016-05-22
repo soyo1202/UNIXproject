@@ -128,7 +128,8 @@ bool checkCollision( int type )
 
 	if( type == 1 )
 	{
-		if( player.x+player.width > boss_3.x && player.y+player.height > boss_3.y &&( first_call || sec > 0.4 ))
+		if( player.x+player.width > boss_3.x && player.x < boss_3.x+boss_3.width
+		&& player.y+player.height > boss_3.y && player.y < boss_3.y+boss_3.height &&( first_call || sec > 0.4 ))
 		{
 			first_call = false;
 			g_timer_start( timer );
