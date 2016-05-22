@@ -124,6 +124,7 @@ bool checkCollision( int type )
 
 	sec = g_timer_elapsed( timer, NULL );
 	
+	printf("get\n");
 
 
 	if( type == 1 )

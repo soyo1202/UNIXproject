@@ -63,6 +63,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	static gdouble ms = 0;
 	static GTimer *timer;
 	static use = false;
+
 	if( ms == 0 )
 	{
 		timer = g_timer_new();
@@ -76,8 +77,9 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	// check unique skill for boss_3
 	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.5 ))
 	{
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, player.x-(boss_width-player_width)/2, player.y-(boss_height-player_height)/2, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-		
+		boss_3.x = player.x-(boss_width-player_width)/2;
+		boss_3.y = player.y-(boss_height-player_height)/2;
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		if( !use )
 		{
 			use = true;
@@ -86,7 +88,10 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 		}
 	}
 	else
+	{
+		calculate_boss3_pos();
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	}
 
 }
 
