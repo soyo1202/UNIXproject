@@ -79,7 +79,6 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	{
 		boss_3.x = player.x-(boss_width-player_width)/2;
 		boss_3.y = player.y-(boss_height-player_height)/2;
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		if( !use )
 		{
 			use = true;
@@ -90,8 +89,8 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	else
 	{
 		calculate_boss3_pos();
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 
 }
 
