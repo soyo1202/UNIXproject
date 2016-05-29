@@ -6,9 +6,12 @@
 #include <glib.h> // for garray
 #include <stdlib.h> // for malloc
 #include <sys/time.h>   // clock_t, clock, CLOCKS_PER_SEC 
+#include <stdlib.h> // for random
+#include <time.h>
 
 #include "chara.h"
 #include "bullet.h"
+#include "item.h"
 
 #define player_width   72
 #define player_height  72
@@ -18,18 +21,21 @@
 #define window_height 600
 #define _R 0
 #define _L 1
-
+#define _item_width	   40
+#define _item_height   40
 
 
 CHARA player;
 CHARA boss_3;
 int player_bullet_num = 0;
 int boss_bullet_num = 0;
+int item_num = 0;
 int bullet_width = 20, bullet_height = 20;
 int player_bullet_mode = 0;
 GtkWidget *wid;
 GPtrArray *player_bullet;
 GPtrArray *boss_bullet;
+GPtrArray *item;
 bool dir_move[4] = {false, false, false, false}; // up left down right
 int dir_shoot = -1;
 int stage = 3; // 關卡
@@ -39,6 +45,9 @@ bool defense = false;
 bool invin = false; // 無敵
 const char *RLchara[2] ={"image/chara_r.png", "image/chara_l.png"};
 int turn = _R;
+bool is_show_item = false;
+
+
 
 bool checkCollision( int type );
 
@@ -75,7 +84,7 @@ void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
 	
 
 	// check unique skill for boss_3
-	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.5 ))
+	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.35 ))
 	{
 		boss_3.x = player.x-(boss_width-player_width)/2;
 		boss_3.y = player.y-(boss_height-player_height)/2;
@@ -100,16 +109,16 @@ void draw_player_life( GdkGC *gc, GdkDrawable *drawable )
 	switch (player.life)
 	{
 		case 5:
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 220, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 220, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 4:
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 170, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 170, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	
 		case 3:
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 120, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 120, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 2:
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 70, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 70, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 1:
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 20, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 20, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		default:
 			break;
 	}
@@ -152,6 +161,9 @@ void make_defense( GdkGC *gc, GdkDrawable *drawable )
 	
 
 }
+
+
+
 #include "timer.c"
 #include "controlKeyboard.c"
 
@@ -161,9 +173,8 @@ void make_defense( GdkGC *gc, GdkDrawable *drawable )
 
 gboolean expose_event_callback(GtkWidget *widget, 
                                GdkEventExpose *event, 
-                               gpointer data) 
+                               gpointer data)
 {
-                               
     GdkGC *gc = widget->style->fg_gc[GTK_WIDGET_STATE(widget)];
     GdkDrawable *drawable = widget->window;
 //    GdkColor color;
@@ -198,6 +209,15 @@ gboolean expose_event_callback(GtkWidget *widget,
 
 	if( defense )
 		make_defense( gc, drawable );
+	
+	
+	for( i = 0; i < item_num; i++ ) // draw item
+	{
+		ITEM *tmp = g_ptr_array_index( item , i);
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/item.png", NULL)
+			, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	}
+	
  	// blood line of boss	
 	double boss_life = boss_3.life;
 	double length = window_width * (double)(boss_3.life/fullblood);
@@ -237,21 +257,22 @@ int main(int argc, char *argv[]) {
                     G_CALLBACK(deal_key_release), NULL);  
 
 
-	g_timeout_add( 50, (GSourceFunc)shoot_bullet, NULL);
-	g_timeout_add( 50, (GSourceFunc)player_move, NULL);
-	g_timeout_add(150, (GSourceFunc)deal_bullet_shoot, NULL);
-
+	g_timeout_add(  50, (GSourceFunc)shoot_bullet, NULL);
+	g_timeout_add(  50, (GSourceFunc)player_move, NULL);
+	g_timeout_add( 150, (GSourceFunc)deal_bullet_shoot, NULL);
+	g_timeout_add(2000, (GSourceFunc)show_item, NULL);
 	
 	
 	// var
 	wid = window;
 	player_bullet = g_ptr_array_new();
 	boss_bullet = g_ptr_array_new();
+	item = g_ptr_array_new();
 	//  initCHARA( CHARA chara, int x, int y, int width, int height, int speed, int type, int life)
 	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 3 );
 	calculate_boss3_pos();
 	initCHARA( &boss_3, boss_3.x, boss_3.y, boss_width, boss_height, 7, 1, 100 );
-	
+	srand(time(NULL));
 	
 	
     gtk_widget_show_all(window);

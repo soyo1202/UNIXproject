@@ -1,3 +1,42 @@
+
+
+gboolean show_item(gpointer data) // 30% Probability show item
+{
+	
+	printf("enter show_item\n");
+	if( rand()%3 == 1 || rand()%3 == 2 )
+		return true;
+	if( item_num == 3 )
+	{
+		printf("item full\n");
+		return;
+	}	
+	
+	ITEM *tmp = malloc(sizeof(ITEM));
+	
+	if( player.x >= window_width/2 ) // player in the right screen
+		tmp->x = (rand()%window_width)/2+400; // 400-800
+	else // player in the left screen
+		tmp->x = (rand()%window_width)/2; // 0-400
+		
+	if( tmp->x+_item_width > window_width )
+		tmp->x -= _item_width;
+	
+	tmp->y = (rand()%window_height);	
+	if(tmp->y+_item_height > window_height)
+		tmp->y -= _item_height;	
+	
+	tmp->type = rand()%4;  // 0-3
+	g_ptr_array_add( item, tmp );
+	item_num++;
+	
+	printf("put\n");
+	return true;
+
+}
+
+
+
 void make_player_bullet()
 {
 	// 0 == up // 1 == left // 2 == down // 3 == right
@@ -129,7 +168,7 @@ bool checkCollision( int type )
 	if( type == 1 )
 	{
 		if( player.x+player.width > boss_3.x && player.x < boss_3.x+boss_3.width
-		&& player.y+player.height > boss_3.y && player.y < boss_3.y+boss_3.height &&( first_call || sec > 0.4 ))
+		&& player.y+player.height > boss_3.y && player.y < boss_3.y+boss_3.height &&( first_call || sec > 0.5 ))
 		{
 			first_call = false;
 			g_timer_start( timer );
@@ -141,7 +180,40 @@ bool checkCollision( int type )
 
 }
 
+void checkEatItem()
+{
+	if( item_num == 0 )
+		return;
+	int i;
+	for( i = 0; i < item_num; i++ )
+	{
+		ITEM *tmp = g_ptr_array_index( item , i);
+		if( player.x+player.width > tmp->x && player.x < tmp->x+_item_width
+			&& player.y+player.height > tmp->y && player.y < tmp->y+_item_height )
+		{
+			
+			switch(tmp->type)
+			{
+			case 0: printf("eat item 0\n"); break;
+			case 1: printf("eat item 1\n"); break;
+			case 2: printf("eat item 2\n"); break;
+			case 3: printf("eat item 3\n"); break;
+			
+			
+			}
+			
+			
+			
+			item_num--;
+			tmp = g_ptr_array_remove_index(item,i);
+			free(tmp);
+			i--;
+		
+		}
+	}
 
+
+}
 
 gboolean player_move(gpointer data)
 {
@@ -167,6 +239,7 @@ gboolean player_move(gpointer data)
 		calculate_boss3_pos();
 		
 	checkCollision(1);
+	checkEatItem();
 	
 	return true;
 }
