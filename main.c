@@ -101,8 +101,7 @@ void draw_player_life( GdkGC *gc, GdkDrawable *drawable )
 		case 5:
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 220, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 4:
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 170, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-	
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 170, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);	
 		case 3:
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/aa.png", NULL), 0, 0, 120, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 2:
