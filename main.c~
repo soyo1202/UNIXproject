@@ -252,7 +252,7 @@ void draw_boss3( GtkWidget *widget )
 		calculate_boss3_pos();
 	}*/
 
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLboss[turn], NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLBoss[turn], NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 }
 
 

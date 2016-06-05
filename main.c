@@ -354,7 +354,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 		for( i = 0; i < boss_bullet_num; i++ )
 		{
 			BULLET *t = g_ptr_array_index(boss_bullet, i);	
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/boss_bullet.png", NULL)
 				, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		}
 
