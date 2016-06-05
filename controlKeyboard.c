@@ -62,35 +62,44 @@ void checkOther( GdkEventKey  *event )
 }
 void checkScreen( GdkEventKey  *event )
 {
+	if(game_state == _story && event->keyval == GDK_space){
+		
+		printf("%s\n", "up_space");
+		storyPic++;
+		int wait = 0;
+		while(wait > 1000000){
+		wait++;
+		}
+	}
 	switch(event->keyval){   // 键盘键值类型  
 		case GDK_Up: 
-		    if( game_state == 0 )		
+		    if( game_state == _start )		
 				arrow_y = 125; // change arrow y place
             break;  
             
         case GDK_Down:
-        	if(game_state == 0)
+        	if(game_state == _start)
 				arrow_y = 210; // change arrow y place
             break;  
 	
 		case GDK_Escape: // pause in game
-			if(game_state == 1 ) // pause in game
-				game_state = 2;
+			if(game_state == _battle ) // pause in game
+				game_state = _pause;
 			break;
 			
 	    case GDK_space: // continue game
-	    	if( game_state == 0 && arrow_y == 125 ) // choose start
-				game_state = 1;
-			else if( game_state == 0 && arrow_y == 210 ) // choose exit
+	    	if( game_state == _start && arrow_y == 125 ) // choose start
+				game_state = _story;
+			else if( game_state == _start && arrow_y == 210 ) // choose exit
 				gtk_main_quit();
-			else if(game_state == 2)
-				game_state = 1;
+			else if(game_state == _pause)
+				game_state = _battle;
 			break;
 		
 	
 	    case GDK_Return:
-			if(game_state == 3 ||game_state == 4 ) // return to start menu
-				game_state = 0;
+			if(game_state == _win ||game_state == _lose ) // return to start menu
+				game_state = _start;
 			break;
 			
 	    case 'w':case 'W': // change bullet mode to push one shoot three
