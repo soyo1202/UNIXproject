@@ -14,10 +14,13 @@ void make_player_bullet()
         	printf("W\n");
         	break;*/
         case 1: // left
-        	tmp->x = player.x;
-        	tmp->y = player.y + (player.height-bullet_height)/2;
-        	tmp->dx = -10;
-        	printf("A\n");
+        	if( turn == _L )
+        	{
+		    	tmp->x = player.x;
+		    	tmp->y = player.y + (player.height-bullet_height)/2;
+		    	tmp->dx = -10;
+		    	printf("A\n");
+        	}
         	break;
      /*   case 2: // down
         	tmp->x = player.x + (player.width-bullet_width)/2;
@@ -26,9 +29,12 @@ void make_player_bullet()
         	printf("S\n");
         	break;*/
         case 3: // right
-        	tmp->x = player.x + player.width-bullet_width;
-        	tmp->y = player.y + (player.height-bullet_height)/2;        	
-        	tmp->dx = 10;
+        	if( turn == _R )
+        	{
+		    	tmp->x = player.x + player.width-bullet_width;
+		    	tmp->y = player.y + (player.height-bullet_height)/2;        	
+		    	tmp->dx = 10;
+        	}
         	printf("D\n");
         	break;
         default:
@@ -62,9 +68,12 @@ void make_boss_3_bullet()
         	//printf("W\n");
         	break;*/
         case 1: // left
-			tmp->x = boss_3.x + boss_3.width-bullet_width;
-        	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;        	
-        	tmp->dx = 10;
+            if( turn == _L )
+        	{
+				tmp->x = boss_3.x + boss_3.width-bullet_width;
+		    	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;        	
+		    	tmp->dx = 10;
+        	}
         	//printf("A\n");
         	break;
     /*    case 2: // down
@@ -74,9 +83,12 @@ void make_boss_3_bullet()
         	//printf("S\n");
         	break;*/
         case 3: // right
+        if( turn == _R )
+        {
         	tmp->x = boss_3.x;
         	tmp->y = boss_3.y + (boss_3.height-bullet_height)/2;
         	tmp->dx = -10;
+        }
         	//printf("D\n");
         	break;
         default:
@@ -241,8 +253,8 @@ gboolean player_move(gpointer data)
 			player.x += player.speed; 
 			
 	
-	if( (dir_move[0] || dir_move[1] || dir_move[2] || dir_move[3]) && stage == 3 )
-		calculate_boss3_pos();
+/*	if( (dir_move[0] || dir_move[1] || dir_move[2] || dir_move[3]) && stage == 3 )
+		calculate_boss3_pos();*/
 		
 	checkCollision(1);
 	checkEatItem();
