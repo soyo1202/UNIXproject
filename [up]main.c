@@ -46,12 +46,19 @@ bool invin = false; // 無敵
 const char *RLchara[2] ={"image/chara_r.png", "image/chara_l.png"};
 int turn = _R;
 bool is_show_item = false;
-int game_state = 0; // game state
-int arrow_x = 195; // arrow's place in x
-int arrow_y = 125; // arrow's place in y
+int game_state = 0;//game state
+int arrow_x = 195;//arrow's place in x
+int arrow_y = 125;//arrow's place in y
+
 
 
 bool checkCollision( int type );
+
+void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable)//start page
+{
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/home.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/arrow1.png", NULL), 0, 0, arrow_x, arrow_y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load arrow
+}
 
 void calculate_boss3_pos()
 {
@@ -68,22 +75,58 @@ void calculate_boss3_pos()
 		boss_3.x = window_width-boss_width;
 }
 
+void draw_boss3( GdkGC *gc, GdkDrawable *drawable )
+{
+	// count time	
+	static gdouble ms = 0;
+	static GTimer *timer;
+	static use = false;
+
+	if( ms == 0 )
+	{
+		timer = g_timer_new();
+		g_timer_start( timer );
+	}
+//	g_timer_stop( timer );
+	ms = g_timer_elapsed( timer, NULL );
+//	printf("time = %f\n",(float)ms);
+	
+
+	// check unique skill for boss_3
+	if( ((float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !use ) || ( use && ms < 0.35 ))
+	{
+		boss_3.x = player.x-(boss_width-player_width)/2;
+		boss_3.y = player.y-(boss_height-player_height)/2;
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		if( !use )
+		{
+			use = true;
+			g_timer_start( timer );
+		//	player.life--;
+		}
+	}
+	else
+	{
+		calculate_boss3_pos();
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	}
+
+}
 
 void draw_player_life( GtkWidget *widget, GdkGC *gc, GdkDrawable *drawable )
 {
-	if( player.life == 0 )
-	{
+	if(player.life == 0)
+	{	
 		game_state = 4; // player lose
 		gtk_widget_queue_draw(widget);
 	}
-
 	switch (player.life)
 	{
 		case 5:
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 220, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 4:
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 170, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-
+	
 		case 3:
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/life.png", NULL), 0, 0, 120, 550, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		case 2:
@@ -133,120 +176,18 @@ void make_defense( GdkGC *gc, GdkDrawable *drawable )
 
 }
 
+
+
 #include "timer.c"
 #include "controlKeyboard.c"
-
-gboolean boss3_skill(GtkWidget *widget)
-{
-	printf("enter boss3_skill timer\n");
-	GdkGC *gc = widget->style->fg_gc[GTK_WIDGET_STATE(widget)];
-    GdkDrawable *drawable = widget->window;
-	static move_stage = 5;
-	static change = -1; 
-	// 5(boss position)->4->3->2->1->0(player position)->1->2->3->4->5
-	calculate_boss3_pos();
-	boss_3.x = player.x+(boss_3.x-player.x)/5*move_stage;
-	boss_3.y = player.y+(boss_3.y-player.y)/5*move_stage;
-	// printf("boss_3.x = %d\n",boss_3.x);
-	/*gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);*/
-	move_stage += change;
-	if( move_stage == 0 )
-		change = 1;
-	if( move_stage == 6 && change == 1 )
-		return false;
-		
-	return true;
-	
-} 
-
-
-
-
-void draw_boss3( GtkWidget *widget )
-{
-	// count time	
-	GdkGC *gc = widget->style->fg_gc[GTK_WIDGET_STATE(widget)];
-    GdkDrawable *drawable = widget->window;
-	static gdouble ms = 0;
-	static GTimer *timer;
-	static use = false;
-	static skill_complete = false;
-	
-	if( ms == 0 )
-	{
-		timer = g_timer_new();
-		g_timer_start( timer );
-	}
-//	g_timer_stop( timer );
-	ms = g_timer_elapsed( timer, NULL );
-	printf("time = %f\n",(float)ms);
-	
-
-	
-	if( (float)(boss_3.life/fullblood) < (float)(1.0/3.0) && !skill_complete )
-	{
-		static move_stage = 5;
-		static change = -1; 
-		// 5(boss position)->...->0(player position)->...s->5
-		if( ms > 0.04 )
-		{
-			calculate_boss3_pos();
-			boss_3.x = player.x+(boss_3.x-player.x)/5*move_stage;
-			boss_3.y = player.y+(boss_3.y-player.y)/5*move_stage;
-			move_stage += change;
-			if( move_stage == 0 )
-				change = 1;
-			if( move_stage == 6 && change == 1 )
-			{
-				// g_timer_destroy(timer);
-				skill_complete = true;
-			}
-			g_timer_start( timer );
-		}
-		
-	}
-	else
-	{
-		calculate_boss3_pos();
-	}
-/*	printf("boss_3.x = %d\n",boss_3.x);
-	printf("complete = %d\n",skill_complete);
-	if( (float)(boss_3.life/fullblood) < (float)(1.0/3.0) )
-	{
-		if( !use )
-		{
-			printf("enter life if -in main.c 179 \n");
-			use = true;
-			skill_complete = g_timeout_add(1000, (GSourceFunc)boss3_skill, widget);
-		}
-	}
-	else
-	{
-		printf("enter else\n");
-		calculate_boss3_pos();
-	}*/
-
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/android_l.png", NULL), 0, 0, boss_3.x, boss_3.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-}
-
-
-
-
 
 void cleanup()//reset all data
 {
 	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 3 );
 	calculate_boss3_pos();
 	initCHARA( &boss_3, boss_3.x, boss_3.y, boss_width, boss_height, 7, 1, 100 );
+
 }
-void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
-{
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/home.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/arrow1.png", NULL), 0, 0, arrow_x, arrow_y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load arrow
-}
-
-
-
 
 
 
@@ -256,88 +197,98 @@ gboolean expose_event_callback(GtkWidget *widget,
 {
     GdkGC *gc = widget->style->fg_gc[GTK_WIDGET_STATE(widget)];
     GdkDrawable *drawable = widget->window;
-//  GdkColor color;
+//    GdkColor color;
 
 //	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("chara.png", NULL);
 //	gdk_draw_pixbuf(drawable, gc, pixbuf, 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);  
-
-// game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
-	if( game_state == 0 ) // check game state
+	
+	if(game_state == 0)//check game state
 	{
-		drawfirstdisplay(gc, drawable); // show the start page
-		cleanup(); // reset all data
+		drawfirstdisplay(gc, drawable);//show the start page
+		cleanup();//reset all data
 	}
-	else if(game_state == 2 ) // pause
-	{
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/pause.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load pause background
-	}
-	else if(game_state == 3 ) // enter win page
-	{
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/win.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
-	}
-	else if(game_state == 4 ) // enter lose page
-	{
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/lose.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
-	}
-	else if(game_state == 5 ) // close window 
-	{
-		// gtk_widget_destroy(GTK_WIDGET(widget));
-		gtk_main_quit();
-	}
-	else if( game_state == 1 ) // battle
-	{   
-		// printf( "boss3 life = %d\n",boss_3.life );
-		if(boss_3.life <= 0) // player win
-		{
-			game_state = 3; // change state
-			gtk_widget_queue_draw(widget);
-			return;
-		}
-			
+	else if(game_state == 1){//enter game
 
 	
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/battle.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
 		, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	
 		draw_player_life( widget, gc, drawable );
 	
-		if( stage == 3 )
-			draw_boss3( widget );
+			if( stage == 3 )
+			draw_boss3( gc, drawable );
+		int i;	
+		if(player_bullet_mode == 0)//check bullet mode
+		{
 	
-		int i;
-		for( i = 0; i < player_bullet_num; i++ )
+		for( i = 0; i < player_bullet_num; i++ )//push one shoot one
 		{
 			BULLET *tmp = g_ptr_array_index(player_bullet, i);	
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
 				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		}
-		for( i = 0; i < boss_bullet_num; i++ )
-		{
-			BULLET *t = g_ptr_array_index(boss_bullet, i);	
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
-				, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-		}
-
-		if( defense )
-			make_defense( gc, drawable );
-	
-	
-		for( i = 0; i < item_num; i++ ) // draw item
-		{
-			ITEM *tmp = g_ptr_array_index( item , i);
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/item.png", NULL)
-				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-		}
-	
-	 	// blood line of boss	
-		double boss_life = boss_3.life;
-		double length = window_width * (double)(boss_3.life/fullblood);
-		gdk_draw_rectangle( drawable, gc, 1, 0, 0, length, 20);
 	}
-
+	else if(player_bullet_mode == 1)//check bullet mode
+	{
+			
+		for( i = 0; i < player_bullet_num; i++ )//push one shoot three
+		{
+			
+			BULLET *tmp = g_ptr_array_index(player_bullet, i);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
+				, 0, 0, tmp->x, tmp->y-25, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);	
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
+				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
+				, 0, 0, tmp->x, tmp->y+25, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);	
 		
+		}
+	}
+	for( i = 0; i < boss_bullet_num; i++ )
+	{
+		BULLET *t = g_ptr_array_index(boss_bullet, i);	
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/bullet.png", NULL)
+			, 0, 0, t->x, t->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	}
 	
- 
+	if( defense )
+		make_defense( gc, drawable );
+	
+	
+	for( i = 0; i < item_num; i++ ) // draw item
+	{
+		ITEM *tmp = g_ptr_array_index( item , i);
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/item.png", NULL)
+			, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	}
+	
+ 	// blood line of boss	
+	double boss_life = boss_3.life;
+	double length = window_width * (double)(boss_3.life/fullblood);
+	gdk_draw_rectangle( drawable, gc, 1, 0, 0, length, 20);
+	if(boss_3.life == 0)//player win
+		game_state = 3;//change state
+	}
+ 	else if(game_state == 2)//pause
+	{
+	
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/pause.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load pause background
+		
+	}
+	else if(game_state == 3)//enter win page
+	{
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/win.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
+	}
+	 else if(game_state == 4)//enter lose page
+	{
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/lose.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
+	}
+	else if(game_state == 5)//close window !!!!!!!!!!cannot close the window!!!!!!!!!!!!!
+	{
+		gtk_widget_destroy(GTK_WIDGET(widget));
+		
+	}
     return TRUE;
 }
 
