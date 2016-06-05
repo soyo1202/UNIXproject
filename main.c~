@@ -7,8 +7,10 @@
 #include <stdlib.h> // for malloc
 #include <sys/time.h>   // clock_t, clock, CLOCKS_PER_SEC 
 #include <stdlib.h> // for random
-#include <time.h>
+#include <stdio.h>//itoa
 
+#include <time.h>
+#include <string.h>
 #include "chara.h"
 #include "bullet.h"
 #include "item.h"
@@ -23,7 +25,15 @@
 #define _L 1
 #define _item_width	   40
 #define _item_height   40
-
+#define _start 0
+#define _battle 1
+#define _pause 2
+#define _win 3
+#define _lose 4
+#define _story 6
+#define _close 5
+// game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
+int storyPic = 0;
 
 CHARA player;
 CHARA boss_3;
@@ -50,7 +60,22 @@ int game_state = 0; // game state
 int arrow_x = 195; // arrow's place in x
 int arrow_y = 125; // arrow's place in y
 
-
+void draw_story(GdkGC *gc, GdkDrawable *drawable){
+	char numbuf[5];	
+	sprintf(numbuf,"%d",storyPic);
+	
+	char s[100] = "opening/";
+	strcat(s, numbuf);
+	strcat(s, ".png");
+	printf("%s\n", s);
+	if(storyPic < 18){
+	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(s, NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+	}
+	else{
+	storyPic = 0;
+	game_state = _battle;
+	}	
+}
 bool checkCollision( int type );
 
 void calculate_boss3_pos()
@@ -201,32 +226,36 @@ gboolean expose_event_callback(GtkWidget *widget,
 //	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("chara.png", NULL);
 //	gdk_draw_pixbuf(drawable, gc, pixbuf, 0, 0, x, y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);  
 
-// game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
-	if( game_state == 0 ) // check game state
+// game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose) 
+	if( game_state == _start ) // check game state
 	{
 		drawfirstdisplay(gc, drawable); // show the start page
 		cleanup(); // reset all data
 	}
-	else if(game_state == 2 ) // pause
+	else if(game_state == _story){
+ 		draw_story(gc, drawable);
+		cleanup();
+	}
+	else if(game_state == _pause ) // pause
 	{
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/pause.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load pause background
 	}
-	else if(game_state == 3 ) // enter win page
+	else if(game_state == _win ) // enter win page
 	{
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/win.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
 	}
-	else if(game_state == 4 ) // enter lose page
+	else if(game_state == _lose ) // enter lose page
 	{
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/lose.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
 	}
-	else if(game_state == 5 ) // close window 
+	else if(game_state == _close ) // close window 
 	{
 		// gtk_widget_destroy(GTK_WIDGET(widget));
 		gtk_main_quit();
 	}
-	else if( game_state == 1 ) // battle
+	else if( game_state == _battle ) // battle
 	{   
-		printf( "boss3 life = %d\n",boss_3.life );
+		// printf( "boss3 life = %d\n",boss_3.life );
 		if(boss_3.life <= 0) // player win
 		{
 			game_state = 3; // change state
