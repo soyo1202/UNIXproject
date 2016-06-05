@@ -33,7 +33,7 @@
 #define _story 6
 #define _close 5
 // game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
-int storyPic = 0;
+int storyPic = 1;
 
 CHARA player;
 CHARA boss_3;
@@ -204,7 +204,7 @@ void draw_boss3( GtkWidget *widget )
 	}
 //	g_timer_stop( timer );
 	ms = g_timer_elapsed( timer, NULL );
-	printf("time = %f\n",(float)ms);
+//	printf("time = %f\n",(float)ms);
 	
 
 	
@@ -212,7 +212,7 @@ void draw_boss3( GtkWidget *widget )
 	{
 		static move_stage = 5;
 		static change = -1; 
-		// 5(boss position)->4->3->2->1->0(player position)->1->2->3->4->5
+		// 5(boss position)->...->0(player position)->...s->5
 		if( ms > 0.04 )
 		{
 			calculate_boss3_pos();
@@ -263,6 +263,14 @@ void cleanup()//reset all data
 	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 3 );
 	calculate_boss3_pos();
 	initCHARA( &boss_3, boss_3.x, boss_3.y, boss_width, boss_height, 7, 1, 100 );
+	g_ptr_array_free (player_bullet, TRUE);
+	g_ptr_array_free (boss_bullet, TRUE);
+	g_ptr_array_free (item, TRUE);
+	
+	player_bullet = g_ptr_array_new();
+	boss_bullet = g_ptr_array_new();
+	item = g_ptr_array_new();
+	
 }
 void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
 {
@@ -316,6 +324,8 @@ gboolean expose_event_callback(GtkWidget *widget,
 	else if( game_state == _battle ) // battle
 	{   
 		// printf( "boss3 life = %d\n",boss_3.life );
+		// drawbackground
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/battle.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		if(boss_3.life <= 0) // player win
 		{
 			game_state = 3; // change state
