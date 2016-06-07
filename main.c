@@ -1,5 +1,9 @@
 // test
 
+//sdlMixer
+#include "SDL/SDL_mixer.h"
+//sdlMixer
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h> // for keyboard，GDK_Up is declared here 
 #include <stdbool.h> // for bool
@@ -33,6 +37,9 @@
 #define _story 6
 #define _close 5
 // game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
+//music
+Mix_Music *music = NULL;
+
 int storyPic = 1;
 
 CHARA player;
@@ -299,6 +306,8 @@ gboolean expose_event_callback(GtkWidget *widget,
 	if( game_state == _start ) // check game state
 	{
 		drawfirstdisplay(gc, drawable); // show the start page
+		//playmusic
+		Mix_PlayMusic(music, -1);
 		cleanup(); // reset all data
 	}
 	else if(game_state == _story){
@@ -382,6 +391,11 @@ gboolean expose_event_callback(GtkWidget *widget,
 }
 
 int main(int argc, char *argv[]) {
+    //init music
+    if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1)
+	printf("fail to init mixer.");
+    Mix_Init(MIX_INIT_MP3);
+    music=Mix_LoadMUS("music/win.mp3");
     GtkWidget *window;
     GtkWidget *drawing_area;
 
