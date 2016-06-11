@@ -137,6 +137,7 @@ bool checkCollision( int type )
 			g_timer_start( timer );
 			printf("collision\n");
 			player.life--;
+			Mix_PlayChannel( -1, hitten, 0 );
 		}
 		
 	}
@@ -165,7 +166,7 @@ void checkEatItem()
 			
 			}
 			
-
+			Mix_PlayChannel( -1, GetItem, 0 );
 			item_num--;
 			tmp = g_ptr_array_remove_index(item,i);
 			free(tmp);
