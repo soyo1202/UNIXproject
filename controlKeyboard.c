@@ -31,16 +31,17 @@ void checkBulletShoot( GdkEventKey  *event, bool shoot )
 	  /*  case 'w': case 'W':
 			dir_shoot = shoot ? 0 : -1 ;
 	    	break;*/
-	    case 'a': case 'A':
-	    	if( turn == _L )
-				dir_shoot = shoot ? 1 : -1 ;
-	    	break;
+	   // case 'a': case 'A':
+	    	
+	    //	break;
 	  /*  case 's': case 'S':
 			dir_shoot = shoot ? 2 : -1 ;
 	    	break;*/
 	    case 'd': case 'D':
 	    	if( turn == _R )
 				dir_shoot = shoot ? 3 : -1 ;
+		if( turn == _L )
+				dir_shoot = shoot ? 1 : -1 ;
 	    	break;  
 		default:
 			return;
