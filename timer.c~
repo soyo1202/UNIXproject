@@ -158,10 +158,10 @@ void checkEatItem()
 			
 			switch(tmp->type)
 			{
-			case 0: printf("eat item 0\n"); break;
-			case 1: printf("eat item 1\n"); break;
-			case 2: printf("eat item 2\n"); break;
-			case 3: printf("eat item 3\n"); break;
+			case 0: printf("eat item 0\n"); break; // rm
+			case 1: printf("eat item 1\n"); break; // fork
+			case 2: printf("eat item 2\n"); break; // cron
+			case 3: printf("eat item 3\n"); break; // cp
 			
 			
 			}
@@ -228,7 +228,7 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 	Mix_PlayChannel( -1, tux, 0 );
 		if( stage == 3 ){
 			make_boss_3_bullet();
-			
+			Mix_PlayChannel( -1, android, 0 );
 		}
 	}
 	return true;

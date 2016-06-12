@@ -1,6 +1,15 @@
 
 void checkPlayerMove( GdkEventKey *event, bool move)
 {
+/*	static gdouble ms = 0;
+	static GTimer *timer;
+	if( ms == 0 )
+	{
+		timer = g_timer_new();
+		g_timer_start( timer );
+	}
+	ms = g_timer_elapsed( timer, NULL );*/
+	
     switch(event->keyval){   // 键盘键值类型  
         case GDK_Up: 
 		    dir_move[0] = move;
@@ -8,7 +17,11 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Left:
 		   	dir_move[1] = move;
-		   	turn = _L;
+		   //	if( ms > 0.3)
+		   //	{
+		   		turn = _L;
+		   		//g_timer_start( timer );
+		   //	}
             break;  
             
         case GDK_Down:
@@ -17,7 +30,11 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Right:
 		    dir_move[3] = move;
-		    turn = _R;
+		   // if( ms > 0.3 )
+		   // {
+		    	turn = _R;
+		   // 	g_timer_start( timer );
+           // }
             break; 	
             
         default:

@@ -158,10 +158,10 @@ void checkEatItem()
 			
 			switch(tmp->type)
 			{
-			case 0: printf("eat item 0\n"); break;
-			case 1: printf("eat item 1\n"); break;
-			case 2: printf("eat item 2\n"); break;
-			case 3: printf("eat item 3\n"); break;
+			case 0: printf("eat item 0\n"); break; // rm
+			case 1: printf("eat item 1\n"); break; // fork
+			case 2: printf("eat item 2\n"); break; // cron
+			case 3: printf("eat item 3\n"); break; // cp
 			
 			
 			}
