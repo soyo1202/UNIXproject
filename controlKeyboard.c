@@ -42,8 +42,8 @@ void checkBulletShoot( GdkEventKey  *event, bool shoot )
 				dir_shoot = shoot ? 3 : -1 ;
 		if( turn == _L )
 				dir_shoot = shoot ? 1 : -1 ;
-		Mix_PlayChannel( -1, tux, 0 );
-		Mix_PlayChannel( -1, android, 0 );
+		
+		
 	    	break;  
 		default:
 			return;

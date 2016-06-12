@@ -225,8 +225,11 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 	if( dir_shoot != -1 )
 	{
     	make_player_bullet();
-		if( stage == 3 )
+	Mix_PlayChannel( -1, tux, 0 );
+		if( stage == 3 ){
 			make_boss_3_bullet();
+			Mix_PlayChannel( -1, android, 0 );
+		}
 	}
 	return true;
 
