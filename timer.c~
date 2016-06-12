@@ -256,8 +256,11 @@ gboolean player_move(gpointer data)
 			player.y += player.speed; 
 			
     if( dir_move[3] )
+    {
+    	turn = _R;
 		if( player.x + player.width <= window_width )
 			player.x += player.speed; 
+	}
 			
 	
 /*	if( (dir_move[0] || dir_move[1] || dir_move[2] || dir_move[3]) && stage == 3 )
@@ -282,7 +285,7 @@ gboolean shoot_bullet(gpointer data) {
 		BULLET *tmp = g_ptr_array_index( player_bullet , i);
 		// check bullet attack boss
 		if((tmp->x >= boss_3.x && tmp->x <= boss_3.x + boss_width && tmp->y >= boss_3.y && tmp->y<= boss_3.y+boss_height))	{
-			boss_3.life -= 20;
+			boss_3.life -= 2;
 			player_bullet_num--;
 			tmp = g_ptr_array_remove_index(player_bullet,i);
 			free(tmp);

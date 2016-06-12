@@ -285,7 +285,7 @@ gboolean shoot_bullet(gpointer data) {
 		BULLET *tmp = g_ptr_array_index( player_bullet , i);
 		// check bullet attack boss
 		if((tmp->x >= boss_3.x && tmp->x <= boss_3.x + boss_width && tmp->y >= boss_3.y && tmp->y<= boss_3.y+boss_height))	{
-			boss_3.life -= 20;
+			boss_3.life -= 5;
 			player_bullet_num--;
 			tmp = g_ptr_array_remove_index(player_bullet,i);
 			free(tmp);

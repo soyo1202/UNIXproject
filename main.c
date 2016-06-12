@@ -38,6 +38,10 @@
 #define _story 6
 #define _close 5
 #define _back 7
+#define _rm 0
+#define _cron 2
+#define _cp 3
+#define _fork 1
 // game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
 // music
 Mix_Music *music = NULL;
@@ -461,8 +465,26 @@ gboolean expose_event_callback(GtkWidget *widget,
 		for( i = 0; i < item_num; i++ ) // draw item
 		{
 			ITEM *tmp = g_ptr_array_index( item , i);
-			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/item.png", NULL)
+			switch(tmp->type){
+			case _cron :
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/itemCRON.png", NULL)
 				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			break;
+			case _rm :
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/itemRM.png", NULL)
+				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			break;
+			case _cp :
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/itemCP.png", NULL)
+				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			break;
+			case _fork :
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/itemFORK.png", NULL)
+				, 0, 0, tmp->x, tmp->y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			break;
+			default:
+			break;
+			}
 		}
 	
 	 	// blood line of boss	
