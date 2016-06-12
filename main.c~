@@ -1,4 +1,4 @@
-// test
+
 
 //sdlMixer
 #include "SDL/SDL_mixer.h"
@@ -39,7 +39,7 @@
 #define _close 5
 #define _back 7
 // game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
-//music
+// music
 Mix_Music *music = NULL;
 
 int storyPic = 1;
@@ -355,7 +355,7 @@ void cleanup()//reset all data
 	use_skill_boss3 = false;
 	invin = false;
 	storyPic = 1;
-
+//	dir_shoot = -1;
 	
 }
 void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
