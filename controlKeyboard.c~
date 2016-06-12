@@ -17,7 +17,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Left:
 		   	dir_move[1] = move;
-		   	if( ms > 0.3)
+		   	if( ms > 0.1)
 		   	{
 		   		turn = _L;
 		   		g_timer_start( timer );
@@ -30,7 +30,7 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Right:
 		    dir_move[3] = move;
-		    if( ms > 0.3 )
+		    if( ms > 0.1 )
 		    {
 		    	turn = _R;
 		    	g_timer_start( timer );

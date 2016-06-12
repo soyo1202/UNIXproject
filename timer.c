@@ -245,16 +245,22 @@ gboolean player_move(gpointer data)
        		player.y -= player.speed;
 
     if( dir_move[1] )
+    {
+    	turn = _L;
 		if( player.x - player.speed >= 0 )
 			player.x -= player.speed;  
+	}
 			
     if( dir_move[2] )
 		if( player.y + player.height <= window_height )
 			player.y += player.speed; 
 			
     if( dir_move[3] )
+    {
+    	turn = _R;
 		if( player.x + player.width <= window_width )
 			player.x += player.speed; 
+	}
 			
 	
 /*	if( (dir_move[0] || dir_move[1] || dir_move[2] || dir_move[3]) && stage == 3 )

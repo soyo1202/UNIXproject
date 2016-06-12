@@ -1,7 +1,7 @@
 
 void checkPlayerMove( GdkEventKey *event, bool move)
 {
-/*	static gdouble ms = 0;
+	/*static gdouble ms = 0;
 	static GTimer *timer;
 	if( ms == 0 )
 	{
@@ -17,11 +17,11 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Left:
 		   	dir_move[1] = move;
-		   //	if( ms > 0.3)
-		   //	{
+		   	//if( ms > 0.1)
+		   	//{
 		   		turn = _L;
-		   		//g_timer_start( timer );
-		   //	}
+		   	//	g_timer_start( timer );
+		   	//}
             break;  
             
         case GDK_Down:
@@ -30,11 +30,11 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Right:
 		    dir_move[3] = move;
-		   // if( ms > 0.3 )
-		   // {
+		    //if( ms > 0.1 )
+		    //{
 		    	turn = _R;
-		   // 	g_timer_start( timer );
-           // }
+		    //	g_timer_start( timer );
+            //}
             break; 	
             
         default:
