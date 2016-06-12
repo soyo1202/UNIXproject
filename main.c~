@@ -1,5 +1,10 @@
 // test
 
+//sdlMixer
+#include "SDL/SDL_mixer.h"
+#include "SDL/SDL.h"
+//sdlMixer
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h> // for keyboard，GDK_Up is declared here 
 #include <stdbool.h> // for bool
@@ -32,7 +37,11 @@
 #define _lose 4
 #define _story 6
 #define _close 5
+#define _back 7
 // game state 0==start  1==battle  2==pause  3==end(win)  4==end(lose)
+//music
+Mix_Music *music = NULL;
+
 int storyPic = 1;
 
 CHARA player;
@@ -60,7 +69,71 @@ bool is_show_item = false;
 int game_state = 0; // game state
 int arrow_x = 195; // arrow's place in x
 int arrow_y = 125; // arrow's place in y
-
+//se
+Mix_Chunk *tux = NULL;
+Mix_Chunk *android = NULL;
+Mix_Chunk *hitten = NULL;
+Mix_Chunk *Tbullet = NULL;
+Mix_Chunk *GetItem = NULL;
+Mix_Chunk *protect = NULL;
+void loadSE(){
+	tux = Mix_LoadWAV( "music/tux.wav" );
+	android = Mix_LoadWAV( "music/android.wav" );
+	hitten = Mix_LoadWAV( "music/hitten.wav" );
+	Tbullet = Mix_LoadWAV( "music/3bullet.wav" );
+	GetItem = Mix_LoadWAV( "music/item.wav" );
+	protect = Mix_LoadWAV( "music/protect.wav" );
+if(tux == NULL || android == NULL || hitten == NULL || Tbullet == NULL || GetItem == NULL || protect ==NULL){
+	printf("SE something goes wrong\n");
+}
+}
+void BGMswitch(int state){
+	switch(state){
+	case _start:{
+		Mix_HaltMusic();
+		Mix_FreeMusic( music );
+		music=Mix_LoadMUS("music/title.mp3");
+		Mix_PlayMusic(music, -1);
+		break;
+		}
+	case _story:{
+		Mix_HaltMusic();
+		Mix_FreeMusic( music );
+		music=Mix_LoadMUS("music/story_normal.mp3");
+		Mix_PlayMusic(music, -1);
+		break;
+		}
+	case _battle:{
+		Mix_HaltMusic();
+		Mix_FreeMusic( music );
+		music=Mix_LoadMUS("music/battle.mp3");
+		Mix_PlayMusic(music, -1);
+		break;
+		}
+	case _win:{
+		Mix_HaltMusic();
+		Mix_FreeMusic( music );
+		music=Mix_LoadMUS("music/win.mp3");
+		Mix_PlayMusic(music, -1);
+		break;
+		}
+	case _lose:{
+		Mix_HaltMusic();
+		Mix_FreeMusic( music );
+		music=Mix_LoadMUS("music/lose.mp3");
+		Mix_PlayMusic(music, -1);
+		break;
+		}
+	case _pause:{
+		Mix_PauseMusic();
+		break;
+		}
+	case _back:{
+		Mix_RewindMusic();
+		break;
+		}
+	}
+}
 void draw_story(GdkGC *gc, GdkDrawable *drawable){
 	char numbuf[5];	
 	sprintf(numbuf,"%d",storyPic);
@@ -73,8 +146,9 @@ void draw_story(GdkGC *gc, GdkDrawable *drawable){
 	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(s, NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
 	else{
-	storyPic = 0;
+	storyPic = 1;
 	game_state = _battle;
+	BGMswitch(_battle);
 	}	
 }
 bool checkCollision( int type );
@@ -310,6 +384,8 @@ gboolean expose_event_callback(GtkWidget *widget,
 	if( game_state == _start ) // check game state
 	{
 		drawfirstdisplay(gc, drawable); // show the start page
+		//playmusic
+		Mix_PlayMusic(music, -1);
 		cleanup(); // reset all data
 	}
 	else if(game_state == _story){
@@ -322,10 +398,12 @@ gboolean expose_event_callback(GtkWidget *widget,
 	}
 	else if(game_state == _win ) // enter win page
 	{
+		BGMswitch(_win);
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/win.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
 	}
 	else if(game_state == _lose ) // enter lose page
 	{
+		BGMswitch(_lose);
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/lose.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
 	}
 	else if(game_state == _close ) // close window 
@@ -393,6 +471,14 @@ gboolean expose_event_callback(GtkWidget *widget,
 }
 
 int main(int argc, char *argv[]) {
+    //init music
+    if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1)
+	printf("fail to init mixer.");
+    Mix_Init(MIX_INIT_MP3);
+    music=Mix_LoadMUS("music/title.mp3");
+    SDL_Init(SDL_INIT_AUDIO);
+    loadSE();
+    //init music
     GtkWidget *window;
     GtkWidget *drawing_area;
 

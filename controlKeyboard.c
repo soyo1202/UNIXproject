@@ -42,6 +42,8 @@ void checkBulletShoot( GdkEventKey  *event, bool shoot )
 				dir_shoot = shoot ? 3 : -1 ;
 		if( turn == _L )
 				dir_shoot = shoot ? 1 : -1 ;
+		Mix_PlayChannel( -1, tux, 0 );
+		Mix_PlayChannel( -1, android, 0 );
 	    	break;  
 		default:
 			return;
@@ -52,8 +54,10 @@ void checkBulletShoot( GdkEventKey  *event, bool shoot )
 void checkOther( GdkEventKey  *event )
 {
 	switch(event->keyval){   // 键盘键值类型  
-	    case 'q': case 'Q':
+	    case 'q': case 'Q':{
 			defense = true;
+			Mix_PlayChannel( -1, protect, 0 );
+		}
 		case 'p': case 'P':
 			invin = !invin;		
 		default:
@@ -84,23 +88,31 @@ void checkScreen( GdkEventKey  *event )
             break;  
 	
 		case GDK_Escape: // pause in game
-			if(game_state == _battle ) // pause in game
+			if(game_state == _battle ){ // pause in game
 				game_state = _pause;
+				BGMswitch(_pause);
+			}
 			break;
 			
 	    case GDK_space: // continue game
-	    	if( game_state == _start && arrow_y == 125 ) // choose start
+	    	if( game_state == _start && arrow_y == 125 ){ // choose start
 				game_state = _story;
+				BGMswitch(_story);
+			}
 			else if( game_state == _start && arrow_y == 210 ) // choose exit
 				gtk_main_quit();
-			else if(game_state == _pause)
+			else if(game_state == _pause){
 				game_state = _battle;
+				BGMswitch(_back);
+			}
 			break;
 		
 	
 	    case GDK_Return:
-			if(game_state == _win ||game_state == _lose ) // return to start menu
+			if(game_state == _win ||game_state == _lose ){ // return to start menu
 				game_state = _start;
+				BGMswitch(_start);
+			}
 			break;
 			
 	    case 'w':case 'W': // change bullet mode to push one shoot three
