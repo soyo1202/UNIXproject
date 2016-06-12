@@ -271,6 +271,17 @@ void cleanup()//reset all data
 	boss_bullet = g_ptr_array_new();
 	item = g_ptr_array_new();
 	
+	player_bullet_num = 0;
+	boss_bullet_num = 0;
+	item_num = 0;
+	
+	printf("enter cleaning\n");
+	fullblood = 100;
+	use_skill_boss3 = false;
+	invin = false;
+	storyPic = 1;
+
+	
 }
 void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
 {
@@ -302,7 +313,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 	}
 	else if(game_state == _story){
  		draw_story(gc, drawable);
-		cleanup();
+		// cleanup();
 	}
 	else if(game_state == _pause ) // pause
 	{
