@@ -129,7 +129,7 @@ void BGMswitch(int state){
 		break;
 		}
 	case _back:{
-		Mix_RewindMusic();
+		Mix_ResumeMusic();
 		break;
 		}
 	}
