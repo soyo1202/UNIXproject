@@ -409,6 +409,13 @@ gboolean expose_event_callback(GtkWidget *widget,
 	else if(game_state == _close ) // close window 
 	{
 		// gtk_widget_destroy(GTK_WIDGET(widget));
+		Mix_FreeChunk(tux);
+		Mix_FreeChunk(android);
+		Mix_FreeChunk(hitten);
+		Mix_FreeChunk(Tbullet);
+		Mix_FreeChunk(GetItem);
+		Mix_FreeChunk(protect);
+		Mix_FreeMusic( music );
 		gtk_main_quit();
 	}
 	else if( game_state == _battle ) // battle
