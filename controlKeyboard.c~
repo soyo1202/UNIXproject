@@ -1,14 +1,14 @@
 
 void checkPlayerMove( GdkEventKey *event, bool move)
 {
-	static gdouble ms = 0;
+	/*static gdouble ms = 0;
 	static GTimer *timer;
 	if( ms == 0 )
 	{
 		timer = g_timer_new();
 		g_timer_start( timer );
 	}
-	ms = g_timer_elapsed( timer, NULL );
+	ms = g_timer_elapsed( timer, NULL );*/
 	
     switch(event->keyval){   // 键盘键值类型  
         case GDK_Up: 
@@ -17,11 +17,11 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Left:
 		   	dir_move[1] = move;
-		   	if( ms > 0.1)
-		   	{
+		   	//if( ms > 0.1)
+		   	//{
 		   		turn = _L;
-		   		g_timer_start( timer );
-		   	}
+		   	//	g_timer_start( timer );
+		   	//}
             break;  
             
         case GDK_Down:
@@ -30,11 +30,11 @@ void checkPlayerMove( GdkEventKey *event, bool move)
             
         case GDK_Right:
 		    dir_move[3] = move;
-		    if( ms > 0.1 )
-		    {
+		    //if( ms > 0.1 )
+		    //{
 		    	turn = _R;
-		    	g_timer_start( timer );
-            }
+		    //	g_timer_start( timer );
+            //}
             break; 	
             
         default:
@@ -122,15 +122,19 @@ void checkScreen( GdkEventKey  *event )
 				game_state = _battle;
 				BGMswitch(_back);
 			}
-			break;
-		
-	
-	    case GDK_Return:
-			if(game_state == _win ||game_state == _lose ){ // return to start menu
+			else if(game_state == _win || game_state == _lose ){ // return to start menu
 				game_state = _start;
 				BGMswitch(_start);
 			}
 			break;
+		
+	
+	/*    case GDK_Return:
+			if(game_state == _win ||game_state == _lose ){ // return to start menu
+				game_state = _start;
+				BGMswitch(_start);
+			}
+			break;*/
 			
 	    case 'w':case 'W': // change bullet mode to push one shoot three
 			player_bullet_mode = 1;

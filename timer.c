@@ -144,6 +144,69 @@ bool checkCollision( int type )
 
 }
 
+void rm() // remove all boss bullet
+{
+	g_ptr_array_free (boss_bullet, TRUE);
+	boss_bullet_num = 0;
+	boss_bullet = g_ptr_array_new();
+}
+
+void cp() // make three bullet for player
+{
+	// 0 == up // 1 == left // 2 == down // 3 == right
+    BULLET *tmp = malloc(sizeof(BULLET));
+    tmp->dx = 0;
+    tmp->dy = 0;
+    BULLET *tmp1 = malloc(sizeof(BULLET));
+    tmp1->dx = 0;
+    tmp1->dy = 0;
+    BULLET *tmp2 = malloc(sizeof(BULLET));
+    tmp2->dx = 0;
+    tmp2->dy = 0;
+
+    if( turn == _L )
+    {
+		tmp->x = player.x;
+		tmp->y = player.y + (player.height-bullet_height)/2;
+		tmp->dx = -10;
+    	printf("A\n");
+
+		tmp1->x = player.x;
+	  	tmp1->y = player.y + (player.height-bullet_height)/2+25;
+    	tmp1->dx = -10;
+		tmp2->x = player.x;
+	   	tmp2->y = player.y + (player.height-bullet_height)/2-25;
+    	tmp2->dx = -10;
+	}
+    else if( turn == _R )
+    {
+		tmp->x = player.x + player.width-bullet_width;
+		tmp->y = player.y + (player.height-bullet_height)/2;        	
+		tmp->dx = 10;
+
+		tmp1->x = player.x+ player.width-bullet_width;;
+		tmp1->y = player.y + (player.height-bullet_height)/2+25;
+		tmp1->dx = 10;
+		tmp2->x = player.x+ player.width-bullet_width;;
+		tmp2->y = player.y + (player.height-bullet_height)/2-25;
+		tmp2->dx = 10;
+    }
+
+	tmp->mode = player_bullet_mode;
+	g_ptr_array_add( player_bullet, tmp );
+	player_bullet_num++;
+		
+				
+	tmp1->mode = player_bullet_mode;
+	g_ptr_array_add( player_bullet, tmp1 );
+	player_bullet_num++;
+	
+	tmp2->mode = player_bullet_mode;
+	g_ptr_array_add( player_bullet, tmp2 );
+	player_bullet_num++;
+	
+}
+
 void checkEatItem()
 {
 	if( item_num == 0 )
@@ -158,10 +221,19 @@ void checkEatItem()
 			
 			switch(tmp->type)
 			{
-			case 0: printf("eat item 0\n"); break; // rm
-			case 1: printf("eat item 1\n"); break; // fork
-			case 2: printf("eat item 2\n"); break; // cron
-			case 3: printf("eat item 3\n"); break; // cp
+			case 0: 
+				rm();
+				printf("eat item 0 (rm)\n");
+				break; // rm
+				
+			case 1: printf("eat item 1 (fork)\n"); break; // fork
+			
+			case 2: printf("eat item 2 (cron)\n"); break; // cron
+			
+			case 3:
+				cp();
+				printf("eat item 3 (cp)\n");
+				break; // cp
 			
 			
 			}

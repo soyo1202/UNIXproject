@@ -122,26 +122,20 @@ void checkScreen( GdkEventKey  *event )
 				game_state = _battle;
 				BGMswitch(_back);
 			}
-			break;
-		
-	
-	    case GDK_Return:
-			if(game_state == _win ||game_state == _lose ){ // return to start menu
+			else if(game_state == _win || game_state == _lose ){ // return to start menu
 				game_state = _start;
 				BGMswitch(_start);
 			}
 			break;
-			
-	    case 'w':case 'W': // change bullet mode to push one shoot three
-			player_bullet_mode = 1;
-			break;
-			
-	    case 'e':case 'E': // change bullet mode back to push one shoot one
-			player_bullet_mode = 0;
-			break;		
 		
-		
-		
+	
+	/*    case GDK_Return:
+			if(game_state == _win ||game_state == _lose ){ // return to start menu
+				game_state = _start;
+				BGMswitch(_start);
+			}
+			break;*/
+					
 		default:
 			break;
 	
