@@ -152,12 +152,14 @@ void draw_story(GdkGC *gc, GdkDrawable *drawable){
 	strcat(s, ".png");
 	printf("%s\n", s);
 	if(storyPic < 18){
-	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(s, NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(s, NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
+	else if( storyPic == 18 )
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("opening/tutorial.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	else{
-	storyPic = 1;
-	game_state = _battle;
-	BGMswitch(_battle);
+		storyPic = 1;
+		game_state = _battle;
+		BGMswitch(_battle);
 	}	
 }
 bool checkCollision( int type );
@@ -466,7 +468,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 	else if(game_state == _lose ) // enter lose page
 	{
 		BGMswitch(_lose);
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/lose.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
+		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/lose.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
 	}
 	else if(game_state == _close ) // close window 
 	{
