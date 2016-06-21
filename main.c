@@ -1,4 +1,3 @@
-// test
 
 //sdlMixer
 #include "SDL/SDL_mixer.h"
@@ -73,6 +72,9 @@ bool is_show_item = false;
 int game_state = 0; // game state
 int arrow_x = 195; // arrow's place in x
 int arrow_y = 125; // arrow's place in y
+bool cron_exist = false;
+
+
 //se
 Mix_Chunk *tux = NULL;
 Mix_Chunk *android = NULL;
@@ -339,7 +341,7 @@ void draw_boss3( GtkWidget *widget )
 
 void cleanup()//reset all data
 {
-	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 3 );
+	initCHARA( &player, 0, window_height/2, player_width, player_height, 7, 0, 3 );
 	calculate_boss3_pos();
 	initCHARA( &boss_3, boss_3.x, boss_3.y, boss_width, boss_height, 7, 1, 100 );
 	g_ptr_array_free (player_bullet, TRUE);
@@ -360,6 +362,7 @@ void cleanup()//reset all data
 	invin = false;
 	storyPic = 1;
 	dir_shoot = -1;
+	cron_exist = false;
 	
 }
 void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
@@ -368,7 +371,24 @@ void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
 	gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/arrow1.png", NULL), 0, 0, arrow_x, arrow_y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load arrow
 }
 
-
+void draw_boss_life(GdkGC *gc, GdkDrawable *drawable) // start page
+{
+	 // blood line of boss	
+	GdkColor color;
+	color.red = 65535;
+	color.blue = 10000;
+	color.green = 10000;
+	gdk_gc_set_rgb_fg_color(gc, &color);
+ 	double boss_life = boss_3.life;
+	double length = window_width * (double)(boss_3.life/fullblood);
+	gdk_draw_rectangle( drawable, gc, TRUE, 0, 0, length, 30); // true -> full fill
+	color.red = 0;
+	color.blue = 0;
+	color.green = 0;
+	gdk_gc_set_rgb_fg_color(gc, &color);
+	gdk_gc_set_line_attributes(gc, 5, 0, 0, 0);
+	gdk_draw_rectangle( drawable, gc, FALSE, 2, 2, window_width-5, 30); // true -> full fill
+}
 
 
 
@@ -413,13 +433,6 @@ gboolean expose_event_callback(GtkWidget *widget,
 	else if(game_state == _close ) // close window 
 	{
 		// gtk_widget_destroy(GTK_WIDGET(widget));
-		Mix_FreeChunk(tux);
-		Mix_FreeChunk(android);
-		Mix_FreeChunk(hitten);
-		Mix_FreeChunk(Tbullet);
-		Mix_FreeChunk(GetItem);
-		Mix_FreeChunk(protect);
-		Mix_FreeMusic( music );
 		gtk_main_quit();
 	}
 	else if( game_state == _battle ) // battle
@@ -434,7 +447,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 			return;
 		}
 			
-
+		draw_boss_life(gc, drawable);
 	
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
 		, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
@@ -487,10 +500,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 			}
 		}
 	
-	 	// blood line of boss	
-		double boss_life = boss_3.life;
-		double length = window_width * (double)(boss_3.life/fullblood);
-		gdk_draw_rectangle( drawable, gc, 1, 0, 0, length, 20);
+
 	}
 
 		
@@ -498,7 +508,20 @@ gboolean expose_event_callback(GtkWidget *widget,
  
     return TRUE;
 }
-
+void fnExit (void)
+{
+	printf("enter fnExit\n");
+  	Mix_FreeChunk(tux);
+	Mix_FreeChunk(android);
+	Mix_FreeChunk(hitten);
+	Mix_FreeChunk(Tbullet);
+	Mix_FreeChunk(GetItem);
+	Mix_FreeChunk(protect);
+	Mix_FreeMusic( music );
+	g_ptr_array_free (player_bullet, TRUE);
+	g_ptr_array_free (boss_bullet, TRUE);
+	g_ptr_array_free (item, TRUE);
+}
 int main(int argc, char *argv[]) {
     //init music
     if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1)
@@ -513,7 +536,7 @@ int main(int argc, char *argv[]) {
 
     gtk_init(&argc, &argv);
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "GtkDrawingArea");
+    gtk_window_set_title(GTK_WINDOW(window), "Beat It !");
 
 
 
@@ -548,7 +571,7 @@ int main(int argc, char *argv[]) {
 	boss_bullet = g_ptr_array_new();
 	item = g_ptr_array_new();
 	//  initCHARA( CHARA chara, int x, int y, int width, int height, int speed, int type, int life)
-	initCHARA( &player, 0, 0, player_width, player_height, 7, 0, 3 );
+	initCHARA( &player, 0, window_height/2, player_width, player_height, 7, 0, 3 );
 	calculate_boss3_pos();
 	initCHARA( &boss_3, boss_3.x, boss_3.y, boss_width, boss_height, 7, 1, 100 );
 	srand(time(NULL));
@@ -558,6 +581,8 @@ int main(int argc, char *argv[]) {
 
     gtk_main();
 
+
+	atexit(fnExit);
     return 0;
 }
 

@@ -207,6 +207,31 @@ void cp() // make three bullet for player
 	
 }
 
+gboolean cron_timer(gpointer data)
+{
+	static times = 0;
+	printf("enter cron timer = %d times\n",times);
+	if( times >= 9 )
+	{
+		times = 0;
+		return FALSE;
+	}
+	times++;
+	return TRUE;
+	
+
+}
+
+void cron()
+{
+	
+	cron_exist = true;
+	g_timeout_add(1000, (GSourceFunc)cron_timer, NULL);
+	printf("enter cron\n");
+
+}
+
+
 void checkEatItem()
 {
 	if( item_num == 0 )
@@ -221,19 +246,26 @@ void checkEatItem()
 			
 			switch(tmp->type)
 			{
-			case 0: 
-				rm();
+			case 0: // rm
+				rm(); 
 				printf("eat item 0 (rm)\n");
-				break; // rm
+				break; 
 				
-			case 1: printf("eat item 1 (fork)\n"); break; // fork
+			case 1: // fork
+				if( player.life < 5 )
+					player.life++;
+				printf("eat item 1 (fork)\n");
+				break;
 			
-			case 2: printf("eat item 2 (cron)\n"); break; // cron
+			case 2: // cron
+				cron();
+				printf("eat item 2 (cron)\n");
+				break;
 			
-			case 3:
+			case 3: // cp
 				cp();
 				printf("eat item 3 (cp)\n");
-				break; // cp
+				break; 
 			
 			
 			}
