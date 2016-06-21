@@ -310,7 +310,7 @@ void checkEatItem()
 
 gboolean show_item(gpointer data) // 30% Probability show item
 {
-	if( game_state != 1 )
+	if( game_state != _battle )
 		return true;
 	
 	printf("enter show_item\n");
@@ -354,7 +354,7 @@ gboolean show_item(gpointer data) // 30% Probability show item
 gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 {
 //	printf("deal shoot = %d\n",dir_shoot);	
-	if( game_state != 1 )
+	if( game_state != _battle )
 		return true;
 		
 	if( dir_shoot != -1 )
@@ -372,7 +372,7 @@ gboolean deal_bullet_shoot(gpointer data) // press keyboard long time
 
 gboolean player_move(gpointer data)
 {
-	if( game_state != 1 )
+	if( game_state != _battle )
 		return true;
 		
 	if ( dir_move[0] )
@@ -411,7 +411,7 @@ gboolean player_move(gpointer data)
 
 gboolean shoot_bullet(gpointer data) {
     // static gint count = 0;
-	if( game_state != 1 )
+	if( game_state != _battle )
 		return true;
 		
 	int i;

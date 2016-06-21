@@ -74,6 +74,8 @@ int arrow_x = 195; // arrow's place in x
 int arrow_y = 125; // arrow's place in y
 bool cron_exist = false;
 int cron_x,cron_y,cron_turn;
+int ending_time = 0;
+int ending_x,ending_y;
 
 
 //se
@@ -180,7 +182,7 @@ void draw_player_life( GtkWidget *widget, GdkGC *gc, GdkDrawable *drawable )
 {
 	if( player.life == 0 )
 	{
-		game_state = 4; // player lose
+		game_state = _lose; // player lose
 		gtk_widget_queue_draw(widget);
 	}
 
@@ -364,6 +366,7 @@ void cleanup()//reset all data
 	storyPic = 1;
 	dir_shoot = -1;
 	cron_exist = false;
+	ending_time = 0;
 	
 }
 void drawfirstdisplay(GdkGC *gc, GdkDrawable *drawable) // start page
@@ -391,7 +394,20 @@ void draw_boss_life(GdkGC *gc, GdkDrawable *drawable) // start page
 	gdk_draw_rectangle( drawable, gc, FALSE, 2, 2, window_width-5, 30); // true -> full fill
 }
 
+gboolean ending_roll(gpointer data)
+{
+	ending_time++;
+	
+	if( ending_time > 50 && ending_y > -750 )
+		ending_y -= 10;
+	
+	if( game_state != _win )
+		return false;
+		
+	gtk_widget_queue_draw(wid);
+	return true;
 
+}
 
 
 gboolean expose_event_callback(GtkWidget *widget, 
@@ -423,8 +439,29 @@ gboolean expose_event_callback(GtkWidget *widget,
 	}
 	else if(game_state == _win ) // enter win page
 	{
-		BGMswitch(_win);
-		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/win.jpg", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);//load background
+		if( ending_time == 0 )
+		{
+			g_timeout_add(100, (GSourceFunc)ending_roll, NULL);
+			ending_time++;
+			ending_x = 50;
+			ending_y = 600;
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/ending.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			BGMswitch(_win);
+		}
+		else if( ending_time < 50 )
+		{
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/ending.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		
+		}
+			
+		else
+		{
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/endingRoll_ori.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/endingRoll_text.png", NULL), 0, 0, ending_x, ending_y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		
+		}	
+		
+		
 	}
 	else if(game_state == _lose ) // enter lose page
 	{
@@ -443,7 +480,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/battle.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 		if(boss_3.life <= 0) // player win
 		{
-			game_state = 3; // change state
+			game_state = _win; // change state
 			gtk_widget_queue_draw(widget);
 			return;
 		}
