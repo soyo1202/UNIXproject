@@ -209,13 +209,38 @@ void cp() // make three bullet for player
 
 gboolean cron_timer(gpointer data)
 {
-	static times = 0;
+	static times = 1;
+
 	printf("enter cron timer = %d times\n",times);
-	if( times >= 9 )
+	
+
+	
+	BULLET *tmp = malloc(sizeof(BULLET));
+    tmp->dx = 0;
+    tmp->dy = 0;
+    if( cron_turn == _L )
+    {
+		tmp->x = cron_x;
+		tmp->y = cron_y + (player.height-bullet_height)/2;
+		tmp->dx = -10;
+    }
+    else if( cron_turn == _R )
+    {
+		tmp->x = cron_x + player.width-bullet_width;
+		tmp->y = cron_y + (player.height-bullet_height)/2;        	
+		tmp->dx = 10;
+    }
+	g_ptr_array_add( player_bullet, tmp );
+	player_bullet_num++;
+	
+	if( times >= 10 )
 	{
 		times = 0;
+		cron_exist = false;
 		return FALSE;
-	}
+	}	
+	
+	
 	times++;
 	return TRUE;
 	
@@ -223,12 +248,13 @@ gboolean cron_timer(gpointer data)
 }
 
 void cron()
-{
-	
+{	
 	cron_exist = true;
+	cron_x = player.x;
+	cron_y = player.y;
+	cron_turn = turn;
 	g_timeout_add(1000, (GSourceFunc)cron_timer, NULL);
 	printf("enter cron\n");
-
 }
 
 
@@ -288,13 +314,18 @@ gboolean show_item(gpointer data) // 30% Probability show item
 		return true;
 	
 	printf("enter show_item\n");
-	if( rand()%3 == 1 || rand()%3 == 2 )
+	if( rand()%3 == 1 || rand()%3 == 2 ) // calculate probability
 		return true;
 	if( item_num == 3 )
 	{
 		printf("item full\n");
 		return true;
 	}	
+	
+	int item_type = rand()%4;
+	if( item_type == 2 && cron_exist )
+		return true;
+	
 	
 	ITEM *tmp = malloc(sizeof(ITEM));
 	
@@ -310,7 +341,7 @@ gboolean show_item(gpointer data) // 30% Probability show item
 	if(tmp->y+_item_height > window_height)
 		tmp->y -= _item_height;	
 	
-	tmp->type = rand()%4;  // 0-3
+	tmp->type = item_type; // 0-3
 	g_ptr_array_add( item, tmp );
 	item_num++;
 	

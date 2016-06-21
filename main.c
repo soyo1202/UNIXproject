@@ -73,6 +73,7 @@ int game_state = 0; // game state
 int arrow_x = 195; // arrow's place in x
 int arrow_y = 125; // arrow's place in y
 bool cron_exist = false;
+int cron_x,cron_y,cron_turn;
 
 
 //se
@@ -448,9 +449,17 @@ gboolean expose_event_callback(GtkWidget *widget,
 		}
 			
 		draw_boss_life(gc, drawable);
+
+
+		if( cron_exist )
+			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[cron_turn], NULL)
+		, 0, 0, cron_x, cron_y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	
 		gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file(RLchara[turn], NULL)
 		, 0, 0, player.x, player.y, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
+		
+
+		
 	
 		draw_player_life( widget, gc, drawable );
 	
