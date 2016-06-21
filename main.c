@@ -445,7 +445,7 @@ gboolean expose_event_callback(GtkWidget *widget,
 		{
 			g_timeout_add(100, (GSourceFunc)ending_roll, NULL);
 			ending_time++;
-			ending_x = 50;
+			ending_x = 100;
 			ending_y = 600;
 			gdk_draw_pixbuf(drawable, gc, gdk_pixbuf_new_from_file("image/ending.png", NULL), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 			BGMswitch(_win);
